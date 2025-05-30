@@ -1,0 +1,3 @@
+[theme]
+base="dark"  # eller "light"
+primaryColor="#DAA520"  # byter accentfärg (t.ex. sliders, checkboxar)
