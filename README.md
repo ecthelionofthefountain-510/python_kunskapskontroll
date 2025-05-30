@@ -1,6 +1,6 @@
-# Kunskapskontroll – Python, NBI
+# Kunskapskontroll – Python
 
-Detta repo innehåller min inlämning för kunskapskontrollen i Python på NBI. Arbetet är uppdelat i två delar och inkluderar även en Streamlit-applikation för interaktiv dataanalys.
+Detta repo innehåller min inlämning för kunskapskontrollen i Python. Arbetet är uppdelat i två (eller tre) delar och inkluderar även en Streamlit-applikation för interaktiv dataanalys.
 
 ---
 
