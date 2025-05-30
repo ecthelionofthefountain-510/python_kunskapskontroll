@@ -53,9 +53,8 @@ filtered_df = df[
     (df['cut'].isin(selected_cut)) &
     (df['color'].isin(selected_color)) &
     (df['clarity'].isin(selected_clarity))
-]
+].copy()
 
-filtered_df = filtered_df.copy()
 filtered_df['carat_group'] = pd.cut(filtered_df['carat'], bins=[0, 0.5, 1, 1.5, 2, 5],
                                     labels=['0-0.5', '0.5-1', '1-1.5', '1.5-2', '2-5'])
 
@@ -72,176 +71,160 @@ st.sidebar.markdown("<hr>", unsafe_allow_html=True)
 st.sidebar.info("Filtrera datan och välj analys för att visualisera samband och dra slutsatser.")
 
 # ================================
-# Diagram
+# Funktionsbaserade diagram
 # ================================
-st.subheader("📊 Välj analys:")
-show_all = st.checkbox("Visa alla analyser samtidigt")
 
-if show_all:
-    st.markdown("### Prisfördelning")
-    fig1, ax1 = plt.subplots()
+def plot_price_distribution(df, ax):
     sns.histplot(
-        filtered_df['price'],
+        df['price'],
         bins=10,
         color='gold',
         edgecolor='black',
         element='bars',
         shrink=0.9,
-        ax=ax1
+        ax=ax
     )
-    ax1.set_xlabel("Pris (USD)")
-    ax1.set_ylabel("Antal")
-    yticks = ax1.get_yticks()
-    ax1.set_yticks([int(y) for y in yticks if y == int(y)])
-    st.pyplot(fig1)
+    ax.set_xlabel("Pris (USD)")
+    ax.set_ylabel("Antal")
+    yticks = ax.get_yticks()
+    ax.set_yticks([int(y) for y in yticks if y == int(y)])
+    ax.set_title("Prisfördelning för diamanter")
 
-    st.markdown("### Genomsnittligt pris per klarhet")
-    fig2, ax2 = plt.subplots()
-    # Genomsnittligt pris per klarhet
-    avg_price_clarity = filtered_df.groupby('clarity', observed=True)['price'].mean().sort_values()
-    avg_price_clarity.plot(kind='bar', color='skyblue', ax=ax2)
-    ax2.set_ylabel("Pris (USD)")
-    st.pyplot(fig2)
+def plot_price_per_clarity(df, ax):
+    avg_price_clarity = df.groupby('clarity', observed=True)['price'].mean().sort_values()
+    avg_price_clarity.plot(kind='bar', color='skyblue', ax=ax)
+    ax.set_ylabel("Pris (USD)")
+    ax.set_title("Genomsnittligt pris per klarhet")
 
-    st.markdown("### Genomsnittligt pris per färg")
-    fig4, ax4 = plt.subplots()
-    # Genomsnittligt pris per färg
-    avg_price_color = filtered_df.groupby('color', observed=True)['price'].mean().sort_values()
-    avg_price_color.plot(kind='bar', color='mediumseagreen', ax=ax4)
-    ax4.set_ylabel("Pris (USD)")
-    st.pyplot(fig4)
+def plot_price_per_color(df, ax):
+    avg_price_color = df.groupby('color', observed=True)['price'].mean().sort_values()
+    avg_price_color.plot(kind='bar', color='mediumseagreen', ax=ax)
+    ax.set_ylabel("Pris (USD)")
+    ax.set_title("Genomsnittligt pris per färg")
 
-    st.markdown("### Pris vs Carat")
-    fig5, ax5 = plt.subplots()
-    ax5.scatter(filtered_df['carat'], filtered_df['price'], alpha=0.3, color='darkblue')
-    ax5.set_xlabel("Carat")
-    ax5.set_ylabel("Pris (USD)")
-    st.pyplot(fig5)
+def plot_price_vs_carat(df, ax):
+    ax.scatter(df['carat'], df['price'], alpha=0.3, color='darkblue')
+    ax.set_xlabel("Carat")
+    ax.set_ylabel("Pris (USD)")
+    ax.set_title("Pris vs Carat")
 
-    st.markdown("### Korrelationsmatris")
-    # Skapa en lista på kolumner som finns och som du vill ha med
+def plot_carat_group(df, ax):
+    avg_price_carat_group = df.groupby('carat_group', observed=True)['price'].mean()
+    avg_price_carat_group.plot(kind='bar', color='lightcoral', ax=ax)
+    ax.set_ylabel("Pris (USD)")
+    ax.set_title("Genomsnittligt pris per caratgrupp")
+
+def plot_cut_pie(df):
+    cut_counts = df['cut'].value_counts()
+    fig, ax = plt.subplots(figsize=(6, 6))
+    ax.pie(cut_counts, labels=cut_counts.index, autopct='%1.1f%%', startangle=140, colors=plt.cm.Pastel1.colors)
+    ax.set_title("Fördelning av slipningstyper")
+    return fig
+
+def plot_xyz_vs_price(df):
+    fig = plt.figure(figsize=(12, 8))
+    plt.scatter(df['x'], df['price'], alpha=0.3, s=1, label='x (Längd)')
+    plt.scatter(df['y'], df['price'], alpha=0.3, s=1, label='y (Bredd)')
+    plt.scatter(df['z'], df['price'], alpha=0.3, s=1, label='z (Höjd)')
+    plt.xlabel('Dimensioner (mm)')
+    plt.ylabel('Pris (USD)')
+    plt.title('Pris vs Dimensioner')
+    plt.legend()
+    plt.grid(True, alpha=0.3)
+    return fig
+
+def plot_corr_heatmap(df):
     base_cols = ['price', 'carat', 'depth', 'table', 'x', 'y', 'z']
     extra_cols = []
-    if 'cut_encoded' in filtered_df.columns:
+    if 'cut_encoded' in df.columns:
         extra_cols.append('cut_encoded')
-    if 'clarity_encoded' in filtered_df.columns:
+    if 'clarity_encoded' in df.columns:
         extra_cols.append('clarity_encoded')
-    if 'color_encoded' in filtered_df.columns:
+    if 'color_encoded' in df.columns:
         extra_cols.append('color_encoded')
     corr_cols = base_cols + extra_cols
 
-    corr_df = filtered_df[corr_cols].copy()
-    # Snygga kolumnnamn för heatmapen
+    corr_df = df[corr_cols].copy()
     corr_df.columns = [
         'Pris', 'Carat', 'Depth', 'Table', 'X', 'Y', 'Z',
         'Cut', 'Clarity', 'Color'
     ][:corr_df.shape[1]]
 
     corr_matrix = corr_df.corr()
-    fig_corr = plt.figure(figsize=(10, 8))
+    fig = plt.figure(figsize=(10, 8))
     sns.heatmap(corr_matrix, annot=True, cmap='YlGnBu', vmin=-1, vmax=1, linewidths=0.5, fmt=".2f", square=True)
     plt.title("Korrelation mellan variabler")
-    st.pyplot(fig_corr)
+    return fig
 
-    st.subheader("Topp 5 dyraste diamanter")
-    st.dataframe(filtered_df.nlargest(5, 'price')[['carat', 'cut', 'color', 'clarity', 'price']])
+# ================================
+# Diagram
+# ================================
+st.subheader("📊 Välj analys:")
+show_all = st.checkbox("Visa alla analyser samtidigt")
+
+diagram_options = [
+    "Prisfördelning",
+    "Pris per klarhet",
+    "Pris per färg",
+    "Pris vs Carat",
+    "Korrelationsmatris"
+]
+
+if show_all:
+    st.markdown("### Prisfördelning")
+    fig1, ax1 = plt.subplots()
+    plot_price_distribution(filtered_df, ax1)
+    st.pyplot(fig1)
+
+    st.markdown("### Genomsnittligt pris per klarhet")
+    fig2, ax2 = plt.subplots()
+    plot_price_per_clarity(filtered_df, ax2)
+    st.pyplot(fig2)
+
+    st.markdown("### Genomsnittligt pris per färg")
+    fig3, ax3 = plt.subplots()
+    plot_price_per_color(filtered_df, ax3)
+    st.pyplot(fig3)
+
+    st.markdown("### Pris vs Carat")
+    fig4, ax4 = plt.subplots()
+    plot_price_vs_carat(filtered_df, ax4)
+    st.pyplot(fig4)
+
+    st.markdown("### Korrelationsmatris")
+    fig_corr = plot_corr_heatmap(filtered_df)
+    st.pyplot(fig_corr)
 
 else:
     plot_option = st.selectbox(
         "Välj vilket diagram du vill se:",
-        [
-            "Prisfördelning",
-            "Pris vs Carat",
-            "Pris per klarhet",
-            "Pris per färg",
-            "Korrelationsmatris"
-        ],
+        diagram_options,
         index=0
     )
 
-    fig, ax = plt.subplots()
-
     if plot_option == "Prisfördelning":
-        sns.histplot(
-            filtered_df['price'],
-            bins=10,
-            color='gold',
-            edgecolor='black',
-            element='bars',
-            shrink=0.9,
-            ax=ax
-        )
-        ax.set_title("Prisfördelning för diamanter")
-        ax.set_xlabel("Pris (USD)")
-        ax.set_ylabel("Antal")
-        yticks = ax.get_yticks()
-        ax.set_yticks([int(y) for y in yticks if y == int(y)])
+        fig, ax = plt.subplots()
+        plot_price_distribution(filtered_df, ax)
+        st.pyplot(fig)
 
     elif plot_option == "Pris per klarhet":
-        filtered_df.groupby('clarity', observed=True)['price'].mean().sort_values().plot(kind='bar', color='skyblue', ax=ax)
-        ax.set_title("Genomsnittligt pris per klarhet")
-        ax.set_ylabel("Pris (USD)")
-
-    elif plot_option == "Pris per caratgrupp":
-        filtered_df.loc[:, 'carat_group'] = pd.cut(filtered_df['carat'], bins=[0, 0.5, 1, 1.5, 2, 5],
-                                            labels=['0-0.5', '0.5-1', '1-1.5', '1.5-2', '2-5'])
-        filtered_df.groupby('carat_group', observed=True)['price'].mean().plot(kind='bar', color='lightcoral', ax=ax)
-        ax.set_title("Genomsnittligt pris per caratgrupp")
-        ax.set_ylabel("Pris (USD)")
+        fig, ax = plt.subplots()
+        plot_price_per_clarity(filtered_df, ax)
+        st.pyplot(fig)
 
     elif plot_option == "Pris per färg":
-        filtered_df.groupby('color', observed=True)['price'].mean().sort_values().plot(kind='bar', color='mediumseagreen', ax=ax)
-        ax.set_title("Genomsnittligt pris per färg")
-        ax.set_ylabel("Pris (USD)")
+        fig, ax = plt.subplots()
+        plot_price_per_color(filtered_df, ax)
+        st.pyplot(fig)
 
     elif plot_option == "Pris vs Carat":
-        ax.scatter(filtered_df['carat'], filtered_df['price'], alpha=0.3, color='darkblue')
-        ax.set_title("Pris vs Carat")
-        ax.set_xlabel("Carat")
-        ax.set_ylabel("Pris (USD)")
-
-    elif plot_option == "Fördelning per slipning":
-        cut_counts = filtered_df['cut'].value_counts()
-        fig, ax = plt.subplots(figsize=(6, 6))
-        ax.pie(cut_counts, labels=cut_counts.index, autopct='%1.1f%%', startangle=140, colors=plt.cm.Pastel1.colors)
-        ax.set_title("Fördelning av slipningstyper")
-
-    elif plot_option == "Pris vs mått (x/y/z)":
-        fig = plt.figure(figsize=(12, 8))
-        plt.scatter(filtered_df['x'], filtered_df['price'], alpha=0.3, s=1, label='x (Längd)')
-        plt.scatter(filtered_df['y'], filtered_df['price'], alpha=0.3, s=1, label='y (Bredd)')
-        plt.scatter(filtered_df['z'], filtered_df['price'], alpha=0.3, s=1, label='z (Höjd)')
-        plt.xlabel('Dimensioner (mm)')
-        plt.ylabel('Pris (USD)')
-        plt.title('Pris vs Dimensioner')
-        plt.legend()
-        plt.grid(True, alpha=0.3)
+        fig, ax = plt.subplots()
+        plot_price_vs_carat(filtered_df, ax)
+        st.pyplot(fig)
 
     elif plot_option == "Korrelationsmatris":
-        # Skapa en lista på kolumner som finns och som du vill ha med
-        base_cols = ['price', 'carat', 'depth', 'table', 'x', 'y', 'z']
-        extra_cols = []
-        if 'cut_encoded' in filtered_df.columns:
-            extra_cols.append('cut_encoded')
-        if 'clarity_encoded' in filtered_df.columns:
-            extra_cols.append('clarity_encoded')
-        if 'color_encoded' in filtered_df.columns:
-            extra_cols.append('color_encoded')
-        corr_cols = base_cols + extra_cols
-
-        corr_df = filtered_df[corr_cols].copy()
-        # Snygga kolumnnamn för heatmapen
-        corr_df.columns = [
-            'Pris', 'Carat', 'Depth', 'Table', 'X', 'Y', 'Z',
-            'Cut', 'Clarity', 'Color'
-        ][:corr_df.shape[1]]
-
-        corr_matrix = corr_df.corr()
-        fig = plt.figure(figsize=(10, 8))
-        sns.heatmap(corr_matrix, annot=True, cmap='YlGnBu', vmin=-1, vmax=1, linewidths=0.5, fmt=".2f", square=True)
-        plt.title("Korrelation mellan variabler")
-
-    st.pyplot(fig)
+        fig = plot_corr_heatmap(filtered_df)
+        st.pyplot(fig)
 
 st.markdown("""
 **Om urvalet av diagram:**  
