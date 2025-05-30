@@ -6,7 +6,7 @@ import seaborn as sns
 # ================================
 # 💫 Titel och introduktion
 # ================================
-st.set_page_config(page_title="Diamantanalys – Guldfynd", page_icon="💎", layout="centered")
+st.set_page_config(page_title="Diamantanalys", page_icon="💎", layout="centered")
 
 st.title("Diamantanalys – Guldfynd")
 st.markdown("""
