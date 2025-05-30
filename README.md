@@ -1,10 +1,10 @@
-# 💎 Kunskapskontroll – Python, NBI
+# Kunskapskontroll – Python, NBI
 
 Detta repo innehåller min inlämning för kunskapskontrollen i Python på NBI. Arbetet är uppdelat i två delar och inkluderar även en Streamlit-applikation för interaktiv dataanalys.
 
 ---
 
-## 📁 Innehåll
+## Innehåll
 
 - `part_1.ipynb` – Teoretiska frågor och Python-övningar
 - `part_2.ipynb` – Dataanalys av diamantdata (data story)
@@ -12,7 +12,7 @@ Detta repo innehåller min inlämning för kunskapskontrollen i Python på NBI. 
 
 ---
 
-## 📝 Del 1 – Teoretiska frågor och Python-övningar
+## Del 1 – Teoretiska frågor och Python-övningar
 
 I denna notebook besvaras bland annat:
 - Skillnaden mellan tuple och list
@@ -26,7 +26,7 @@ I denna notebook besvaras bland annat:
 
 ---
 
-## 📊 Del 2 – Dataanalys av diamantdata
+## Del 2 – Dataanalys av diamantdata
 
 I denna notebook analyseras ett stort dataset med diamanter utifrån ett affärscase för Guldfynd.
 
@@ -39,7 +39,7 @@ Analysen innehåller:
 
 ---
 
-## 🌐 Streamlit-applikation
+## Streamlit-applikation
 
 `streamlit_app.py` är en interaktiv webbapplikation där användaren kan:
 - Filtrera diamanter på pris, carat, färg, klarhet och slipning
@@ -51,9 +51,9 @@ Appen fokuserar på kvalitet framför kvantitet och visar endast de mest relevan
 
 ---
 
-## ▶️ Så här kör du
+## Så här kör du
 
-1. Klona repot och installera beroenden (t.ex. via requirements.txt om du har en sådan)
+1. Klona repot och installera beroenden
 2. Starta Jupyter Notebook för att läsa och köra `part_1.ipynb` och `part_2.ipynb`
 3. Starta Streamlit-appen med:
 
@@ -63,13 +63,9 @@ streamlit run streamlit_app.py
 
 ---
 
-## ℹ️ Om projektet
+## Om projektet
 
 Syftet är att visa förståelse för både grundläggande Python och dataanalys, samt att kunna kommunicera insikter på ett tydligt sätt – både i kod och visuellt.  
 Analysen är utformad som en "data story" och Streamlit-appen är anpassad för att ge beslutsfattare en snabb överblick av diamantmarknaden.
 
 ---
-
-## 📬 Kontakt
-
-Vid frågor, kontakta [ditt namn eller e-post här].
