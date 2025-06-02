@@ -156,6 +156,22 @@ def plot_corr_heatmap(df):
     plt.title("Korrelation mellan variabler")
     return fig
 
+def plot_pca(df):
+    from sklearn.preprocessing import StandardScaler
+    from sklearn.decomposition import PCA
+
+    features = ['carat', 'depth', 'table', 'x', 'y', 'z']
+    X = StandardScaler().fit_transform(df[features])
+    pca = PCA(n_components=2)
+    X_pca = pca.fit_transform(X)
+    fig, ax = plt.subplots()
+    scatter = ax.scatter(X_pca[:,0], X_pca[:,1], c=df['clarity_encoded'], cmap='viridis', alpha=0.5)
+    ax.set_xlabel('PCA 1')
+    ax.set_ylabel('PCA 2')
+    ax.set_title('PCA av diamantdata (färgad efter klarhet)')
+    fig.colorbar(scatter, label='Clarity')
+    return fig
+
 # ================================
 # Diagram
 # ================================
@@ -167,7 +183,8 @@ diagram_options = [
     "Pris per klarhet",
     "Pris per färg",
     "Pris vs Carat",
-    "Korrelationsmatris"
+    "Korrelationsmatris",
+    "PCA-visualisering"
 ]
 
 if show_all:
@@ -194,6 +211,10 @@ if show_all:
     st.markdown("### Korrelationsmatris")
     fig_corr = plot_corr_heatmap(filtered_df)
     st.pyplot(fig_corr)
+
+    st.markdown("### PCA-visualisering")
+    fig_pca = plot_pca(filtered_df)
+    st.pyplot(fig_pca)
 
 else:
     plot_option = st.selectbox(
@@ -224,6 +245,10 @@ else:
 
     elif plot_option == "Korrelationsmatris":
         fig = plot_corr_heatmap(filtered_df)
+        st.pyplot(fig)
+
+    elif plot_option == "PCA-visualisering":
+        fig = plot_pca(filtered_df)
         st.pyplot(fig)
 
 st.markdown("""
