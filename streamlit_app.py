@@ -8,10 +8,29 @@ import seaborn as sns
 # ================================
 st.set_page_config(page_title="Diamantanalys", page_icon="💎", layout="centered")
 
-st.title("Diamantanalys – Guldfynd")
+st.markdown("""
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Caveat:wght@400..700&display=swap" rel="stylesheet">
+<style>
+.caveat-rubrik, h1.custom-title {
+  font-family: "Caveat", cursive !important;
+  font-optical-sizing: auto;
+  font-weight: 700;
+  font-style: normal;
+  color: #DAA520;
+  font-size: 4.8em;
+  margin-bottom: 0.1em;
+}
+</style>
+<h1 class='custom-title caveat-rubrik'>Diamantanalys – Guldfynd</h1>
+""", unsafe_allow_html=True)
 st.markdown("""
 Företaget Guldfynd undersöker möjligheten att erbjuda diamanter i sitt sortiment.  
-Denna app visar insikter från en analys av över 50 000 diamanter, där vi tittar på pris, vikt, färg och klarhet.
+Denna app presenterar insikter från en analys av över 50 000 diamanter.  
+**Använd filtren i sidomenyn för att utforska pris, vikt, färg och klarhet.**
+
+💡 *Varje diagram har en kort förklaring kring vad du ser och varför det är relevant.*
 """)
 
 # ================================
@@ -68,7 +87,10 @@ st.sidebar.markdown("### 📊 Nyckeltal")
 st.sidebar.metric("📈 Genomsnittspris", f"${int(filtered_df['price'].mean())}")
 st.sidebar.metric("💎 Genomsnittlig carat", round(filtered_df['carat'].mean(), 2))
 st.sidebar.markdown("<hr>", unsafe_allow_html=True)
-st.sidebar.info("Filtrera datan och välj analys för att visualisera samband och dra slutsatser.")
+st.sidebar.info("""
+**Filtrera diamanterna**
+Justera filtret för slipning, färg, klarhet, pris och carat för att anpassa analysen efter olika kundsegment eller prisklasser.
+""")
 
 # ================================
 # Funktionsbaserade diagram
@@ -107,31 +129,6 @@ def plot_price_vs_carat(df, ax):
     ax.set_xlabel("Carat")
     ax.set_ylabel("Pris (USD)")
     ax.set_title("Pris vs Carat")
-
-def plot_carat_group(df, ax):
-    avg_price_carat_group = df.groupby('carat_group', observed=True)['price'].mean()
-    avg_price_carat_group.plot(kind='bar', color='lightcoral', ax=ax)
-    ax.set_ylabel("Pris (USD)")
-    ax.set_title("Genomsnittligt pris per caratgrupp")
-
-def plot_cut_pie(df):
-    cut_counts = df['cut'].value_counts()
-    fig, ax = plt.subplots(figsize=(6, 6))
-    ax.pie(cut_counts, labels=cut_counts.index, autopct='%1.1f%%', startangle=140, colors=plt.cm.Pastel1.colors)
-    ax.set_title("Fördelning av slipningstyper")
-    return fig
-
-def plot_xyz_vs_price(df):
-    fig = plt.figure(figsize=(12, 8))
-    plt.scatter(df['x'], df['price'], alpha=0.3, s=1, label='x (Längd)')
-    plt.scatter(df['y'], df['price'], alpha=0.3, s=1, label='y (Bredd)')
-    plt.scatter(df['z'], df['price'], alpha=0.3, s=1, label='z (Höjd)')
-    plt.xlabel('Dimensioner (mm)')
-    plt.ylabel('Pris (USD)')
-    plt.title('Pris vs Dimensioner')
-    plt.legend()
-    plt.grid(True, alpha=0.3)
-    return fig
 
 def plot_corr_heatmap(df):
     base_cols = ['price', 'carat', 'depth', 'table', 'x', 'y', 'z']
@@ -188,31 +185,55 @@ diagram_options = [
 ]
 
 if show_all:
-    st.markdown("### Prisfördelning")
+    st.markdown("""
+**Prisfördelning**  
+Histogrammet visar hur priset är fördelat bland alla diamanter som matchar dina filter.  
+Detta ger en snabb överblick om marknaden har flest billigare eller dyrare diamanter, och om det finns extremvärden (outliers).
+""")
     fig1, ax1 = plt.subplots()
     plot_price_distribution(filtered_df, ax1)
     st.pyplot(fig1)
 
-    st.markdown("### Genomsnittligt pris per klarhet")
+    st.markdown("""
+**Genomsnittligt pris per klarhet**  
+Stapeldiagrammet jämför medelpriset för diamanter beroende på deras klarhetsgrad.  
+Det är viktigt för att förstå hur mycket klarheten (dvs. hur "ren" stenen är) faktiskt påverkar priset.
+""")
     fig2, ax2 = plt.subplots()
     plot_price_per_clarity(filtered_df, ax2)
     st.pyplot(fig2)
 
-    st.markdown("### Genomsnittligt pris per färg")
+    st.markdown("""
+**Genomsnittligt pris per färg**  
+Här ser du hur priset varierar beroende på diamantens färgskala (D–J).  
+Det hjälper Guldfynd förstå vilka färggrader som är mest värdefulla på marknaden.
+""")
     fig3, ax3 = plt.subplots()
     plot_price_per_color(filtered_df, ax3)
     st.pyplot(fig3)
 
-    st.markdown("### Pris vs Carat")
+    st.markdown("""
+**Pris vs Carat**  
+Punktdiagrammet visar sambandet mellan vikt (carat) och pris.  
+Ju större stenen är, desto mer ökar priset – ofta exponentiellt snarare än linjärt.
+""")
     fig4, ax4 = plt.subplots()
     plot_price_vs_carat(filtered_df, ax4)
     st.pyplot(fig4)
 
-    st.markdown("### Korrelationsmatris")
+    st.markdown("""
+**Korrelationsmatris**  
+Visar sambanden mellan numeriska variabler i datasetet.  
+Här kan man se om vissa egenskaper (t.ex. carat och pris) har starkt samband, vilket kan påverka Guldfynds prissättning.
+""")
     fig_corr = plot_corr_heatmap(filtered_df)
     st.pyplot(fig_corr)
 
-    st.markdown("### PCA-visualisering")
+    st.markdown("""
+**PCA-visualisering**  
+Principal Component Analysis (PCA) reducerar datan till två dimensioner för att visualisera mönster och grupperingar, färgat efter klarhet.  
+Det hjälper till att upptäcka om vissa egenskaper "hänger ihop" på oväntade sätt.
+""")
     fig_pca = plot_pca(filtered_df)
     st.pyplot(fig_pca)
 
@@ -224,36 +245,66 @@ else:
     )
 
     if plot_option == "Prisfördelning":
+        st.markdown("""
+        **Prisfördelning**  
+        Histogrammet visar hur priset är fördelat bland alla diamanter som matchar dina filter.  
+        Detta ger en snabb överblick om marknaden har flest billigare eller dyrare diamanter, och om det finns extremvärden (outliers).
+        """)
         fig, ax = plt.subplots()
         plot_price_distribution(filtered_df, ax)
         st.pyplot(fig)
 
     elif plot_option == "Pris per klarhet":
+        st.markdown("""
+        **Genomsnittligt pris per klarhet**  
+        Stapeldiagrammet jämför medelpriset för diamanter beroende på deras klarhetsgrad.  
+        Det är viktigt för att förstå hur mycket klarheten (dvs. hur "ren" stenen är) faktiskt påverkar priset.
+        """)
         fig, ax = plt.subplots()
         plot_price_per_clarity(filtered_df, ax)
         st.pyplot(fig)
 
     elif plot_option == "Pris per färg":
+        st.markdown("""
+        **Genomsnittligt pris per färg**  
+        Här ser du hur priset varierar beroende på diamantens färgskala (D–J).  
+        Det hjälper Guldfynd förstå vilka färggrader som är mest värdefulla på marknaden.
+        """)
         fig, ax = plt.subplots()
         plot_price_per_color(filtered_df, ax)
         st.pyplot(fig)
 
     elif plot_option == "Pris vs Carat":
+        st.markdown("""
+        **Pris vs Carat**  
+        Punktdiagrammet visar sambandet mellan vikt (carat) och pris.  
+        Ju större stenen är, desto mer ökar priset – ofta exponentiellt snarare än linjärt.
+        """)
         fig, ax = plt.subplots()
         plot_price_vs_carat(filtered_df, ax)
         st.pyplot(fig)
 
     elif plot_option == "Korrelationsmatris":
+        st.markdown("""
+        **Korrelationsmatris**  
+        Visar sambanden mellan numeriska variabler i datasetet.  
+        Här kan man se om vissa egenskaper (t.ex. carat och pris) har starkt samband, vilket kan påverka Guldfynds prissättning.
+        """)
         fig = plot_corr_heatmap(filtered_df)
         st.pyplot(fig)
 
     elif plot_option == "PCA-visualisering":
+        st.markdown("""
+        **PCA-visualisering**  
+        Principal Component Analysis (PCA) reducerar datan till två dimensioner för att visualisera mönster och grupperingar, färgat efter klarhet.  
+        Det hjälper till att upptäcka om vissa egenskaper "hänger ihop" på oväntade sätt.
+        """)
         fig = plot_pca(filtered_df)
         st.pyplot(fig)
 
 st.markdown("""
 **Om urvalet av diagram:**  
-För att ge en tydlig och relevant bild av diamantmarknaden har jag valt ut fem diagram som tillsammans fångar de viktigaste sambanden i datan.  
+För att ge en tydlig och relevant bild av diamantmarknaden har jag valt ut sex diagram som tillsammans fångar de viktigaste sambanden i datan.  
 Dessa visualiseringar visar hur priset påverkas av storlek (carat), klarhet och färg, samt ger en översikt av prisfördelningen och sambanden mellan variabler.  
 Urvalet är gjort för att fokusera på kvalitet och insikt snarare än kvantitet.
 """)
@@ -267,6 +318,10 @@ st.download_button(
     file_name='filtrerade_diamanter.csv',
     mime='text/csv'
 )
+
+st.markdown("""
+---
+""")
 
 # ================================
 # Executive Summary
@@ -285,3 +340,4 @@ for col in required_cols:
     if col not in filtered_df.columns:
         st.error(f"Saknar kolumnen '{col}' i datafilen!")
         st.stop()
+
