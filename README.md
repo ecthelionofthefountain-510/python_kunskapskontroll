@@ -1,5 +1,8 @@
 # Kunskapskontroll – Python
 
+🚀 **Testa Streamlit-appen här:**  
+https://pythonkunskapskontroll-f4irjt8dpfpun6ksmqiatg.streamlit.app/
+
 Detta repo innehåller min inlämning för kunskapskontrollen i Python. Arbetet är uppdelat i två (eller tre) delar och inkluderar även en Streamlit-applikation för interaktiv dataanalys.
 
 ---
@@ -53,11 +56,13 @@ Appen fokuserar på kvalitet framför kvantitet och visar endast de mest relevan
 
 ## Så här kör du
 
-1. Klona repot och installera beroenden
-2. Starta Jupyter Notebook för att läsa och köra `part_1.ipynb` och `part_2.ipynb`
+1. Klona repot och installera beroenden (finns i filen requirements.txt)
+2. **Kör `part_2.ipynb` i Jupyter Notebook för att skapa filen `diamonds_clean.csv` (krävs för Streamlit-appen!)**
 3. Starta Streamlit-appen med:
 
-streamlit run streamlit_app.py
+   ```
+   streamlit run streamlit_app.py
+   ```
 
 4. Se till att filen `diamonds_clean.csv` finns i projektmappen (skapas automatiskt av notebooken).
 
