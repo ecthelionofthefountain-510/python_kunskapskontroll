@@ -58,7 +58,7 @@ Appen fokuserar på kvalitet framför kvantitet och visar endast de mest relevan
 
 Här är en översikt av Streamlit-appen som används för att analysera diamantdata interaktivt:
 
-![Förhandsvisning av appen](./guldfynd_screenshot.jpeg)
+![Förhandsvisning av appen](./guldfynd_screenshot.png)
 
 ## Så här kör du
 
