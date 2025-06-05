@@ -125,10 +125,21 @@ def plot_price_per_color(df, ax):
     ax.set_title("Genomsnittligt pris per färg")
 
 def plot_price_vs_carat(df, ax):
-    ax.scatter(df['carat'], df['price'], alpha=0.3, color='darkblue')
+    clarities = df['clarity'].cat.categories if hasattr(df['clarity'], 'cat') else df['clarity'].unique()
+    colors = plt.cm.tab10.colors  # Anpassa om du har fler än 10 klasser
+
+    for i, clarity in enumerate(clarities):
+        subset = df[df['clarity'] == clarity]
+        ax.scatter(
+            subset['carat'], subset['price'],
+            alpha=0.4, s=15,
+            color=colors[i % len(colors)],
+            label=str(clarity)
+        )
     ax.set_xlabel("Carat")
     ax.set_ylabel("Pris (USD)")
-    ax.set_title("Pris vs Carat")
+    ax.set_title("Pris vs Carat (färgad efter klarhet)")
+    ax.legend(title='Clarity', bbox_to_anchor=(1.05, 1), loc='upper left')
 
 def plot_corr_heatmap(df):
     base_cols = ['price', 'carat', 'depth', 'table', 'x', 'y', 'z']
