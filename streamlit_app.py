@@ -76,7 +76,7 @@ filtered_df['carat_group'] = pd.cut(filtered_df['carat'], bins=[0, 0.5, 1, 1.5, 
                                     labels=['0-0.5', '0.5-1', '1-1.5', '1.5-2', '2-5'])
 
 if filtered_df.empty:
-    st.warning("🙁 Ingen diamant matchar dina val. Justera filtren till vänster.")
+    st.warning("Ingen diamant matchar dina val. Justera filtren till vänster.")
     st.stop()
 
 st.info(f"Antal diamanter som matchar filtren: {len(filtered_df)}")
