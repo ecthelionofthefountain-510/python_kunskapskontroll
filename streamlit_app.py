@@ -11,7 +11,7 @@ st.set_page_config(page_title="Diamantanalys", page_icon="💎", layout="centere
 st.markdown("""
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Caveat:wght@400..700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Fascinate+Inline&display=swap" rel="stylesheet">
 <style>
 .caveat-rubrik, h1.custom-title {
   font-family: "Caveat", cursive !important;
@@ -25,13 +25,11 @@ st.markdown("""
 </style>
 <h1 class='custom-title caveat-rubrik'>Diamantanalys – Guldfynd</h1>
 """, unsafe_allow_html=True)
-st.markdown("""
-Företaget Guldfynd undersöker möjligheten att erbjuda diamanter i sitt sortiment.  
-Denna app presenterar insikter från en analys av över 50 000 diamanter.  
-**Använd filtren i sidomenyn för att utforska pris, vikt, färg och klarhet.**
 
-💡 *Varje diagram har en kort förklaring kring vad du ser och varför det är relevant.*
-""")
+st.markdown("""
+Företaget Guldfynd överväger att sälja diamanter.  
+Denna app visar insikter från analysen av över 50 000 diamanter.
+""", unsafe_allow_html=True)
 
 # ================================
 # Läs in städad data
@@ -183,8 +181,8 @@ def plot_pca(df):
 # ================================
 # Diagram
 # ================================
-st.subheader("📊 Välj analys:")
-show_all = st.checkbox("Visa alla analyser samtidigt")
+
+show_all = st.checkbox("Visa alla diagram", value=True)
 
 diagram_options = [
     "Prisfördelning",
@@ -196,122 +194,123 @@ diagram_options = [
 ]
 
 if show_all:
-    st.markdown("""
-**Prisfördelning**  
-Histogrammet visar hur priset är fördelat bland alla diamanter som matchar dina filter.  
-Detta ger en snabb överblick om marknaden har flest billigare eller dyrare diamanter, och om det finns extremvärden (outliers).
-""")
     fig1, ax1 = plt.subplots()
     plot_price_distribution(filtered_df, ax1)
     st.pyplot(fig1)
+    with st.expander("Vad visar diagrammet?"):
+        st.markdown("""
+        Histogrammet visar hur priset är fördelat bland alla diamanter som matchar dina filter.
+        Ger en snabb överblick om marknaden har flest billigare eller dyrare diamanter, och om det finns extremvärden.
+        """)
 
-    st.markdown("""
-**Genomsnittligt pris per klarhet**  
-Stapeldiagrammet jämför medelpriset för diamanter beroende på deras klarhetsgrad.  
-Det är viktigt för att förstå hur mycket klarheten (dvs. hur "ren" stenen är) faktiskt påverkar priset.
-""")
     fig2, ax2 = plt.subplots()
     plot_price_per_clarity(filtered_df, ax2)
     st.pyplot(fig2)
+    with st.expander("Vad visar diagrammet?"):
+        st.markdown("""
+        Stapeldiagrammet jämför medelpriset för diamanter beroende på deras klarhetsgrad.
+        Det är viktigt för att förstå hur mycket klarheten (dvs. hur "ren" stenen är) faktiskt påverkar priset.
+        """)
 
-    st.markdown("""
-**Genomsnittligt pris per färg**  
-Här ser du hur priset varierar beroende på diamantens färgskala (D–J).  
-Det hjälper Guldfynd förstå vilka färggrader som är mest värdefulla på marknaden.
-""")
     fig3, ax3 = plt.subplots()
     plot_price_per_color(filtered_df, ax3)
     st.pyplot(fig3)
+    with st.expander("Vad visar diagrammet?"):
+        st.markdown("""
+        Här ser du hur priset varierar beroende på diamantens färgskala (D–J).
+        Det hjälper Guldfynd förstå vilka färggrader som är mest värdefulla på marknaden.
+        """)
 
-    st.markdown("""
-**Pris vs Carat**  
-Punktdiagrammet visar sambandet mellan vikt (carat) och pris.  
-Ju större stenen är, desto mer ökar priset – ofta exponentiellt snarare än linjärt.
-""")
     fig4, ax4 = plt.subplots()
     plot_price_vs_carat(filtered_df, ax4)
     st.pyplot(fig4)
+    with st.expander("Vad visar diagrammet?"):
+        st.markdown("""
+        Punktdiagrammet visar sambandet mellan vikt (carat) och pris.
+        Ju större stenen är, desto mer ökar priset – ofta exponentiellt snarare än linjärt.
+        """)
 
-    st.markdown("""
-**Korrelationsmatris**  
-Visar sambanden mellan numeriska variabler i datasetet.  
-Här kan man se om vissa egenskaper (t.ex. carat och pris) har starkt samband, vilket kan påverka Guldfynds prissättning.
-""")
     fig_corr = plot_corr_heatmap(filtered_df)
     st.pyplot(fig_corr)
+    with st.expander("Vad visar diagrammet?"):
+        st.markdown("""
+        Visar sambanden mellan numeriska variabler i datasetet.
+        Här kan man se om vissa egenskaper (t.ex. carat och pris) har starkt samband, vilket kan påverka Guldfynds prissättning.
+        """)
 
-    st.markdown("""
-**PCA-visualisering**  
-Principal Component Analysis (PCA) reducerar datan till två dimensioner för att visualisera mönster och grupperingar, färgat efter klarhet.  
-Det hjälper till att upptäcka om vissa egenskaper "hänger ihop" på oväntade sätt.
-""")
     fig_pca = plot_pca(filtered_df)
     st.pyplot(fig_pca)
+    with st.expander("Vad visar diagrammet?"):
+        st.markdown("""
+        Principal Component Analysis (PCA) reducerar datan till två dimensioner för att visualisera mönster och grupperingar, färgat efter klarhet.
+        Det hjälper till att upptäcka om vissa egenskaper "hänger ihop" på oväntade sätt.
+        """)
 
 else:
     plot_option = st.selectbox(
-        "Välj vilket diagram du vill se:",
+        
+        "Välj ett specifikt diagram:",
         diagram_options,
         index=0
     )
 
     if plot_option == "Prisfördelning":
-        st.markdown("""
-        **Prisfördelning**  
-        Histogrammet visar hur priset är fördelat bland alla diamanter som matchar dina filter.  
-        Detta ger en snabb överblick om marknaden har flest billigare eller dyrare diamanter, och om det finns extremvärden (outliers).
-        """)
         fig, ax = plt.subplots()
         plot_price_distribution(filtered_df, ax)
         st.pyplot(fig)
+        with st.expander("Vad visar diagrammet?"):
+            st.markdown("""
+            Histogrammet visar hur priset är fördelat bland alla diamanter som matchar dina filter.
+            Ger en snabb överblick om marknaden har flest billigare eller dyrare diamanter, och om det finns extremvärden.
+            """)
 
     elif plot_option == "Pris per klarhet":
-        st.markdown("""
-        **Genomsnittligt pris per klarhet**  
-        Stapeldiagrammet jämför medelpriset för diamanter beroende på deras klarhetsgrad.  
-        Det är viktigt för att förstå hur mycket klarheten (dvs. hur "ren" stenen är) faktiskt påverkar priset.
-        """)
         fig, ax = plt.subplots()
         plot_price_per_clarity(filtered_df, ax)
         st.pyplot(fig)
+        with st.expander("Vad visar diagrammet?"):
+            st.markdown("""
+            Stapeldiagrammet jämför medelpriset för diamanter beroende på deras klarhetsgrad.
+            Det är viktigt för att förstå hur mycket klarheten (dvs. hur "ren" stenen är) faktiskt påverkar priset.
+            """)
 
     elif plot_option == "Pris per färg":
-        st.markdown("""
-        **Genomsnittligt pris per färg**  
-        Här ser du hur priset varierar beroende på diamantens färgskala (D–J).  
-        Det hjälper Guldfynd förstå vilka färggrader som är mest värdefulla på marknaden.
-        """)
         fig, ax = plt.subplots()
         plot_price_per_color(filtered_df, ax)
         st.pyplot(fig)
+        with st.expander("Vad visar diagrammet?"):
+            st.markdown("""
+            Här ser du hur priset varierar beroende på diamantens färgskala (D–J).
+            Det hjälper Guldfynd förstå vilka färggrader som är mest värdefulla på marknaden.
+            """)
 
     elif plot_option == "Pris vs Carat":
-        st.markdown("""
-        **Pris vs Carat**  
-        Punktdiagrammet visar sambandet mellan vikt (carat) och pris.  
-        Ju större stenen är, desto mer ökar priset – ofta exponentiellt snarare än linjärt.
-        """)
         fig, ax = plt.subplots()
         plot_price_vs_carat(filtered_df, ax)
         st.pyplot(fig)
+        with st.expander("Vad visar diagrammet?"):
+            st.markdown("""
+            Punktdiagrammet visar sambandet mellan vikt (carat) och pris.
+            Ju större stenen är, desto mer ökar priset – ofta exponentiellt snarare än linjärt.
+            """)
 
     elif plot_option == "Korrelationsmatris":
-        st.markdown("""
-        **Korrelationsmatris**  
-        Visar sambanden mellan numeriska variabler i datasetet.  
-        Här kan man se om vissa egenskaper (t.ex. carat och pris) har starkt samband, vilket kan påverka Guldfynds prissättning.
-        """)
         fig = plot_corr_heatmap(filtered_df)
         st.pyplot(fig)
+        with st.expander("Vad visar diagrammet?"):
+            st.markdown("""
+            Visar sambanden mellan numeriska variabler i datasetet.
+            Här kan man se om vissa egenskaper (t.ex. carat och pris) har starkt samband, vilket kan påverka Guldfynds prissättning.
+            """)
 
     elif plot_option == "PCA-visualisering":
-        st.markdown("""
-        **PCA-visualisering**  
-        Principal Component Analysis (PCA) reducerar datan till två dimensioner för att visualisera mönster och grupperingar, färgat efter klarhet.  
-        Det hjälper till att upptäcka om vissa egenskaper "hänger ihop" på oväntade sätt.
-        """)
         fig = plot_pca(filtered_df)
         st.pyplot(fig)
+        with st.expander("Vad visar diagrammet?"):
+            st.markdown("""
+            Principal Component Analysis (PCA) reducerar datan till två dimensioner för att visualisera mönster och grupperingar, färgat efter klarhet.
+            Det hjälper till att upptäcka om vissa egenskaper "hänger ihop" på oväntade sätt.
+            """)
 
 st.markdown("""
 **Om urvalet av diagram:**  
