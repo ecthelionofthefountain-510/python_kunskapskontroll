@@ -54,6 +54,12 @@ Appen fokuserar på kvalitet framför kvantitet och visar endast de mest relevan
 
 ---
 
+## Förhandsvisning
+
+Här är en översikt av Streamlit-appen som används för att analysera diamantdata interaktivt:
+
+![Förhandsvisning av appen](./guldfynd_screenshot.jpeg)
+
 ## Så här kör du
 
 1. Klona repot och installera beroenden (finns i filen requirements.txt)
