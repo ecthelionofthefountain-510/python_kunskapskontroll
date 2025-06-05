@@ -1,7 +1,7 @@
 # Kunskapskontroll – Python
 
 🚀 **Testa Streamlit-appen här:**  
-https://pythonkunskapskontroll-f4irjt8dpfpun6ksmqiatg.streamlit.app/
+https://pythonkunskapskontroll-kevin.streamlit.app/
 
 Detta repo innehåller min inlämning för kunskapskontrollen i Python. Arbetet är uppdelat i två (eller tre) delar och inkluderar även en Streamlit-applikation för interaktiv dataanalys.
 
